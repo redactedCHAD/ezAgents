@@ -8,7 +8,8 @@ export async function runImageAgent(task: string, onOutput: (data: any) => void)
   const eventStore = useEventStore.getState();
   const workflowStore = useWorkflowStore.getState();
 
-  const nodeId = 'image-agent';
+  const node = workflowStore.nodes.find(n => n.data.agentName === 'Image Agent');
+  const nodeId = node?.id || 'image-agent';
   eventStore.addActiveAgent('Image Agent');
   eventStore.addEvent({ agent: 'Image Agent', type: 'AGENT_START', message: `Generating image prompt for: "${task}"` });
   workflowStore.updateNodeStatus(nodeId, 'Executing');
@@ -18,8 +19,7 @@ export async function runImageAgent(task: string, onOutput: (data: any) => void)
   try {
     eventStore.addEvent({ agent: 'Image Agent', type: 'MODEL_CALL', message: 'Calling gemini-3-flash-preview' });
     
-    const node = workflowStore.nodes.find(n => n.id === nodeId);
-    const systemInstruction = node?.data.systemPrompt || 'You are an expert visual director. Generate a detailed image prompt, a social media caption for the image, and alt text.';
+    const systemInstruction = node?.data.systemPrompt || 'You are Morgan, an expert Visual Director and Prompt Engineer. You have a keen eye for aesthetics, composition, and lighting. Your expertise lies in translating abstract concepts into vivid, highly detailed image generation prompts. When tasked with a visual concept, you provide a comprehensive image prompt (including style, lighting, camera angles, and mood), a catchy social media caption tailored to the visual, and descriptive alt text for accessibility.';
 
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',

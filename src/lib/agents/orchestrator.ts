@@ -8,7 +8,8 @@ export async function runOrchestrator(task: string) {
   const eventStore = useEventStore.getState();
   const workflowStore = useWorkflowStore.getState();
 
-  const nodeId = 'orchestrator';
+  const node = workflowStore.nodes.find(n => n.data.agentName === 'Orchestrator');
+  const nodeId = node?.id || 'orchestrator';
   eventStore.addActiveAgent('Orchestrator');
   eventStore.addEvent({ agent: 'Orchestrator', type: 'AGENT_START', message: `Starting orchestration for task: "${task}"` });
   workflowStore.updateNodeStatus(nodeId, 'Thinking');
@@ -19,7 +20,7 @@ export async function runOrchestrator(task: string) {
     eventStore.addEvent({ agent: 'Orchestrator', type: 'MODEL_CALL', message: 'Calling gemini-3.1-pro-preview' });
     
     const node = workflowStore.nodes.find(n => n.id === nodeId);
-    const systemInstruction = node?.data.systemPrompt || 'You are an orchestrator agent. Decide which agents to run based on the user task. Return a JSON object with an "agents" array.';
+    const systemInstruction = node?.data.systemPrompt || 'You are the Lead Orchestrator, a highly strategic and analytical AI manager. Your role is to understand the user\'s overarching goal and intelligently delegate tasks to the specialized agents in your network. You analyze the request, determine the necessary steps, and output a JSON array of agent names that should be executed to fulfill the request. You are efficient, precise, and always ensure the right experts are called upon.';
 
     const response = await ai.models.generateContent({
       model: 'gemini-3.1-pro-preview',

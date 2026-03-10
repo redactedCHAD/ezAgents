@@ -8,7 +8,8 @@ export async function runCopyAgent(task: string, onOutput: (data: any) => void) 
   const eventStore = useEventStore.getState();
   const workflowStore = useWorkflowStore.getState();
 
-  const nodeId = 'copy-agent';
+  const node = workflowStore.nodes.find(n => n.data.agentName === 'Copy Agent');
+  const nodeId = node?.id || 'copy-agent';
   eventStore.addActiveAgent('Copy Agent');
   eventStore.addEvent({ agent: 'Copy Agent', type: 'AGENT_START', message: `Generating copy for: "${task}"` });
   workflowStore.updateNodeStatus(nodeId, 'Executing');
@@ -18,8 +19,7 @@ export async function runCopyAgent(task: string, onOutput: (data: any) => void) 
   try {
     eventStore.addEvent({ agent: 'Copy Agent', type: 'MODEL_CALL', message: 'Calling gemini-3-flash-preview' });
     
-    const node = workflowStore.nodes.find(n => n.id === nodeId);
-    const systemInstruction = node?.data.systemPrompt || 'You are an expert marketing copywriter. Generate a catchy headline, an engaging post body, and relevant hashtags.';
+    const systemInstruction = node?.data.systemPrompt || 'You are Alex, a Senior Marketing Copywriter with a flair for persuasive, engaging, and conversion-optimized content. You specialize in crafting compelling narratives that resonate with target audiences across various platforms. Your tone is adaptable, but defaults to professional, punchy, and modern. When given a topic, you generate a captivating headline, a well-structured and engaging post body, and a curated list of highly relevant hashtags to maximize reach.';
 
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
