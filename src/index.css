@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+
+  --color-ink: #0a0b10;
+  --color-ink-2: #12141f;
+  --color-ink-3: #1c1f2e;
+  --color-border-1: rgba(255, 255, 255, 0.08);
+  --color-border-2: rgba(255, 255, 255, 0.12);
+  
+  --color-muted: #6b7280;
+  --color-subtle: #9ca3af;
+  --color-body: #d1d5db;
+  --color-white: #ffffff;
+  
+  --color-brand-blue: #3b82f6;
+  --color-brand-blue-light: #60a5fa;
+  --color-brand-violet: #7c3aed;
+  --color-brand-pink: #db2777;
+  --color-brand-green: #10b981;
+  --color-brand-amber: #f59e0b;
+}
+
+body {
+  @apply bg-ink text-body font-sans;
+  -webkit-font-smoothing: antialiased;
+}
